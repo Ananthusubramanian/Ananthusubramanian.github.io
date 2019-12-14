@@ -102,7 +102,7 @@ class PKDot extends StatelessWidget {
     return Row(
       children: <Widget>[
         Text(
-          "PK MTECHVIRAL",
+          "",
           textScaleFactor: 2,
           style: TextStyle(
             fontWeight: FontWeight.bold,
@@ -180,7 +180,7 @@ class ProfileInfo extends StatelessWidget {
         style: TextStyle(color: Colors.orange),
       ),
       Text(
-        "Pawan\nKumar",
+        "M S Ananthu\nSubramanian",
         textScaleFactor: 5,
         style: TextStyle(
           color: Colors.white,
@@ -191,9 +191,9 @@ class ProfileInfo extends StatelessWidget {
         height: 10,
       ),
       Text(
-        "A Google Developer Expert for Flutter, Dart & Web Tech.\n"
-        "I am also a youtuber having MTechViral youtube channel\n"
-        "where I make tutorials for technology.",
+        "Android Developer And DevOps\n"
+        "I am studying in Amrita Vishwa Vidyapeetham\n"
+        "",
         softWrap: true,
         textScaleFactor: 1.5,
         style: TextStyle(color: Colors.white70),
@@ -264,21 +264,14 @@ class SocialInfo extends StatelessWidget {
       NavButton(
         text: "Github",
         onPressed: () {
-          html.window.open("https://github.com/iampawan", "Git");
+          html.window.open("https://github.com/Ananthusubramanian", "GitHub");
         },
         color: Colors.blue,
       ),
       NavButton(
         text: "Twitter",
         onPressed: () {
-          html.window.open("https://twitter.com/imthepk", "Twitter");
-        },
-        color: Colors.blue,
-      ),
-      NavButton(
-        text: "Facebook",
-        onPressed: () {
-          html.window.open("https://facebook.com/thepawankumaar", "Fb");
+          html.window.open("https://twitter.com/EpicAnanduk", "Twitter");
         },
         color: Colors.blue,
       ),
@@ -286,7 +279,7 @@ class SocialInfo extends StatelessWidget {
   }
 
   Widget copyRightText() => Text(
-        "Pawan Kumar ©️2019",
+        "Ananthusubramanian ©️2019",
         textAlign: TextAlign.center,
         style: TextStyle(
           color: Colors.grey,
