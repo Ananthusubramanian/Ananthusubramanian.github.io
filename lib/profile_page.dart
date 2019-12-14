@@ -10,19 +10,19 @@ class ProfilePage extends StatelessWidget {
         NavButton(
           text: "about",
           onPressed: () {
-            html.window.open("https://pawan.live", "Pk");
+            html.window.open("https://wwww.google.com", "Pk");
           },
         ),
         NavButton(
           text: "work",
           onPressed: () {
-            html.window.open("https://pawan.live", "Pk");
+            html.window.open("https://wwww.google.com", "Pk");
           },
         ),
         NavButton(
           text: "contact",
           onPressed: () {
-            html.window.open("https://pawan.live", "Pk");
+            html.window.open("https://wwww.google.com", "Pk");
           },
         ),
       ];
@@ -159,9 +159,8 @@ class ProfileInfo extends StatelessWidget {
             ? MediaQuery.of(context).size.height * 0.25
             : MediaQuery.of(context).size.width * 0.25,
         decoration: BoxDecoration(
-          backgroundBlendMode: BlendMode.luminosity,
-          color: Colors.deepOrange,
-//            borderRadius: BorderRadius.circular(40),
+          color: Colors.white,
+//          borderRadius: BorderRadius.circular(40),
           shape: BoxShape.circle,
           image: DecorationImage(
             image: AssetImage("pk.jpg"),
@@ -210,7 +209,7 @@ class ProfileInfo extends StatelessWidget {
             color: Colors.red,
             onPressed: () {
               html.window.open(
-                  "https://google-developers.appspot.com/community/experts/directory/profile/profile-pawan_kumar",
+                  "https://wwww.google.com",
                   "GDE");
             },
             padding: EdgeInsets.all(10),
@@ -226,7 +225,7 @@ class ProfileInfo extends StatelessWidget {
             child: Text("Say Hi!"),
             color: Colors.red,
             onPressed: () {
-              html.window.open("https://pawan.live", "Pk");
+              html.window.open("https://wwww.google.com", "Pk");
             },
             padding: EdgeInsets.all(10),
           )
