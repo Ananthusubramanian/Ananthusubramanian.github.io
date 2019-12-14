@@ -14,7 +14,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         brightness: Brightness.dark,
-        primaryColorDark: Colors.white,
+        primaryColorDark: Colors.black,
         fontFamily: "GoogleSansRegular",
       ),
       home: ProfilePage(),
