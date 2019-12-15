@@ -1,310 +1,257 @@
-import 'dart:html' as html;
-
 import 'package:flutter_web/material.dart';
-import 'package:myportfolio/responsive_widget.dart';
+import 'package:flutter_web/rendering.dart';
+import 'package:kt_website/models/app_state_model.dart';
+import 'animations/animations.dart';
+import 'components/components.dart';
+import 'utils/utils.dart';
 
 class ProfilePage extends StatelessWidget {
-  const ProfilePage({Key key}) : super(key: key);
+  ProfilePage(this.controller, this.size)
+      : animation = WebPageEnterAnimation(controller, size);
 
-  List<Widget> navButtons() => [
-        NavButton(
-          text: "about",
-          onPressed: () {
-            html.window.open("https://wwww.google.com", "Pk");
-          },
-        ),
-        NavButton(
-          text: "work",
-          onPressed: () {
-            html.window.open("https://wwww.google.com", "Pk");
-          },
-        ),
-        NavButton(
-          text: "contact",
-          onPressed: () {
-            html.window.open("https://wwww.google.com", "Pk");
-          },
-        ),
-      ];
-
+  final AnimationController controller;
+  final WebPageEnterAnimation animation;
+  final Size size;
   @override
   Widget build(BuildContext context) {
+    print(animation.fABAnimation.value);
     return ResponsiveWidget(
-      largeScreen: Scaffold(
-        backgroundColor: Colors.black,
-        appBar: AppBar(
-          elevation: 0.0,
-          backgroundColor: Colors.black,
+      smallScreen: Scaffold(
+        floatingActionButton: AnimatedBuilder(
+          animation: controller,
+          builder: (context, widget) {
+            return Transform(
+              transform: Matrix4.translationValues(
+                  0.0, animation.fABAnimation.value, 0.0),
+              child: ResponsiveWidget.isSmallScreen(context)
+                  ? Builder(
+                      builder: (context) {
+                        return FloatingActionButton(
+                          child: Icon(
+                            Icons.menu,
+                            color: Colors.white,
+                          ),
+                          backgroundColor: Colors.white70,
+                          onPressed: () {
+                            Scaffold.of(context).openEndDrawer();
+                          },
+                        );
+                      },
+                    )
+                  : null,
+            );
+          },
         ),
-        drawer: ResponsiveWidget.isSmallScreen(context)
-            ? Drawer(
-                child: ListView(
-                  padding: const EdgeInsets.all(20),
-                  children: navButtons(),
-                ),
-              )
-            : null,
-        body: SingleChildScrollView(
-          child: AnimatedPadding(
-            duration: Duration(seconds: 1),
-            padding: EdgeInsets.all(MediaQuery.of(context).size.height * 0.1),
-            child: ResponsiveWidget(
-              largeScreen: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: <Widget>[
-                  NavHeader(navButtons: navButtons()),
-                  SizedBox(
-                    height: MediaQuery.of(context).size.height * 0.1,
-                  ),
-                  ProfileInfo(),
-                  SizedBox(
-                    height: MediaQuery.of(context).size.height * 0.2,
-                  ),
-                  SocialInfo(),
-                ],
-              ),
-            ),
+        endDrawer: Drawer(
+          elevation: 0,
+          child: Container(
+            color: Colors.black45,
+            child: NavigationRow(controller, size),
           ),
         ),
+        backgroundColor: Colors.black,
+        body: _buildScreen(),
+      ),
+      largeScreen: Scaffold(
+        backgroundColor: Colors.black,
+        body: _buildScreen(),
       ),
     );
   }
-}
 
-class NavHeader extends StatelessWidget {
-  final List<Widget> navButtons;
-
-  const NavHeader({Key key, this.navButtons}) : super(key: key);
-
-  Widget build(BuildContext context) {
-    return ResponsiveWidget(
-      largeScreen: Row(
-        mainAxisAlignment: ResponsiveWidget.isSmallScreen(context)
-            ? MainAxisAlignment.center
-            : MainAxisAlignment.spaceBetween,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: <Widget>[
-          PKDot(),
-//          Spacer(),
-          if (!ResponsiveWidget.isSmallScreen(context))
-            Row(
-              children: navButtons,
+  Widget _buildScreen() {
+    return AnimatedBuilder(
+      animation: controller,
+      builder: (context, widget) {
+        return Stack(
+          children: [
+            Opacity(
+              opacity: animation.backgroundOpacity.value,
+              child: Container(
+                decoration: BoxDecoration(
+                  image: DecorationImage(
+                      image: AssetImage("background2.jpg"),
+                      fit: BoxFit.fill,
+                      alignment: Alignment.center),
+                ),
+              ),
+            ),
+            SingleChildScrollView(
+              child: AnimatedPadding(
+                  duration: Duration(milliseconds: 500),
+                  padding: EdgeInsets.all(MediaQuery.of(context).size.height *
+                      (ResponsiveWidget.isSmallScreen(context) ? 0.02 : 0.1)),
+                  child: ResponsiveWidget.isLargeScreen(context)
+                      ? Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            NavHeader(controller, size),
+                            SizedBox(
+                              height: MediaQuery.of(context).size.height * 0.1,
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              children: <Widget>[
+                                Column(
+                                  children: <Widget>[
+                                    Transform(
+                                      transform: Matrix4.diagonal3Values(
+                                        animation.pictureSize.value,
+                                        animation.pictureSize.value,
+                                        1.0,
+                                      ),
+                                      alignment: Alignment.center,
+                                      child: ProfilePicture(),
+                                    ),
+                                    Transform(
+                                      transform: Matrix4.translationValues(
+                                          animation.profileDataAnimation.value,
+                                          0.0,
+                                          0.0),
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(10.0),
+                                        child: profileData(context),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                Transform(
+                                  transform: Matrix4.translationValues(
+                                      animation.listviewAnimation.value,
+                                      0.0,
+                                      0.0),
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(10.0),
+                                    child: AccomplishmentsList(),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        )
+                      : Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            NavHeader(controller, size),
+                            Transform(
+                              transform: Matrix4.diagonal3Values(
+                                animation.pictureSize.value,
+                                animation.pictureSize.value,
+                                1.0,
+                              ),
+                              alignment: Alignment.center,
+                              child: ProfilePicture(),
+                            ),
+                            Transform(
+                              transform: Matrix4.translationValues(
+                                  animation.profileDataAnimation.value,
+                                  0.0,
+                                  0.0),
+                              child: Padding(
+                                padding: const EdgeInsets.all(10.0),
+                                child: profileData(context),
+                              ),
+                            ),
+                            Transform(
+                                transform: Matrix4.translationValues(
+                                    animation.listviewAnimation.value,
+                                    0.0,
+                                    0.0),
+                                child: AccomplishmentsList()),
+                          ],
+                        )),
+            ),
+            Transform(
+              transform: Matrix4.translationValues(
+                  0.0, animation.slideAnimation.value, 0.0),
+              child: Container(
+                width: MediaQuery.of(context).size.width / 2,
+                height: MediaQuery.of(context).size.height,
+                color: Colors.black,
+              ),
+            ),
+            Transform(
+              transform: Matrix4.translationValues(
+                  MediaQuery.of(context).size.width / 2,
+                  -animation.slideAnimation.value,
+                  0.0),
+              child: Container(
+                width: MediaQuery.of(context).size.width / 2,
+                height: MediaQuery.of(context).size.height,
+                color: Colors.black,
+              ),
+            ),
+            Center(
+              child: Opacity(
+                opacity: animation.fadeNameAnimation.value,
+                child: Text(
+                  "M S Ananthu Subramanian",
+                  style: TextStyle(fontSize: 45, fontWeight: FontWeight.bold),
+                ),
+              ),
             )
-        ],
-      ),
+          ],
+        );
+      },
     );
   }
-}
 
-class PKDot extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Row(
+  Widget profileData(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         Text(
-          "",
-          textScaleFactor: 2,
+          "Hello! My name is",
+          textScaleFactor: ResponsiveWidget.isSmallScreen(context) ? 1 : 2,
+          style: TextStyle(color: Colors.blueAccent),
+        ),
+        Text(
+          "M S Ananthu Subramanian",
+          textScaleFactor: ResponsiveWidget.isSmallScreen(context) ? 1.5 : 5,
           style: TextStyle(
+            color: Colors.white,
             fontWeight: FontWeight.bold,
           ),
         ),
         SizedBox(
-          width: 5,
+          height: 10,
         ),
-        AnimatedContainer(
-          duration: Duration(seconds: 1),
-          height: 8,
-          width: 8,
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            color: Colors.orange,
-          ),
+        Text(
+          "Computer Engineering Student And DevOps\n",
+          softWrap: true,
+          textScaleFactor: ResponsiveWidget.isSmallScreen(context) ? 1 : 1.5,
+          style: TextStyle(color: Colors.white70),
         ),
-      ],
-    );
-  }
-}
-
-class NavButton extends StatelessWidget {
-  final text;
-  final onPressed;
-  final Color color;
-
-  const NavButton(
-      {Key key,
-      @required this.text,
-      @required this.onPressed,
-      this.color = Colors.orange})
-      : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return OutlineButton(
-      child: Text(text),
-      borderSide: BorderSide(
-        color: color,
-      ),
-      onPressed: onPressed,
-      highlightedBorderColor: color,
-    );
-  }
-}
-
-class ProfileInfo extends StatelessWidget {
-  profileImage(context) => Container(
-        height: ResponsiveWidget.isSmallScreen(context)
-            ? MediaQuery.of(context).size.height * 0.25
-            : MediaQuery.of(context).size.width * 0.25,
-        width: ResponsiveWidget.isSmallScreen(context)
-            ? MediaQuery.of(context).size.height * 0.25
-            : MediaQuery.of(context).size.width * 0.25,
-        decoration: BoxDecoration(
-          color: Colors.white,
-//          borderRadius: BorderRadius.circular(40),
-          shape: BoxShape.circle,
-          image: DecorationImage(
-            image: AssetImage("pk.jpg"),
-            alignment: Alignment.center,
-            fit: BoxFit.cover,
-          ),
+        SizedBox(
+          height: 20,
         ),
-      );
-
-  final profileData = Column(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: <Widget>[
-      Text(
-        "Hi there! My name is",
-        textScaleFactor: 2,
-        style: TextStyle(color: Colors.orange),
-      ),
-      Text(
-        "M S Ananthu\nSubramanian",
-        textScaleFactor: 5,
-        style: TextStyle(
-          color: Colors.white,
-          fontWeight: FontWeight.bold,
-        ),
-      ),
-      SizedBox(
-        height: 10,
-      ),
-      Text(
-        "Android Developer And DevOps\n"
-        "I am studying in Amrita Vishwa Vidyapeetham\n"
-        "",
-        softWrap: true,
-        textScaleFactor: 1.5,
-        style: TextStyle(color: Colors.white70),
-      ),
-      SizedBox(
-        height: 20,
-      ),
-      Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: <Widget>[
-          RaisedButton(
-            shape: StadiumBorder(),
-            child: Text("Resume"),
-            color: Colors.red,
-            onPressed: () {
-              html.window.open(
-                  "https://wwww.google.com",
-                  "GDE");
-            },
-            padding: EdgeInsets.all(10),
-          ),
-          SizedBox(
-            width: 20,
-          ),
-          OutlineButton(
-            borderSide: BorderSide(
-              color: Colors.red,
+        Row(
+          children: <Widget>[
+            RaisedButton(
+              shape: StadiumBorder(),
+              child: Text("Contact"),
+              color: Colors.green,
+              onPressed: () {
+                AppStateContainer.of(context).changePage(Page.CONTACT);
+              },
+              padding: EdgeInsets.all(10),
             ),
-            shape: StadiumBorder(),
-            child: Text("Say Hi!"),
-            color: Colors.red,
-            onPressed: () {
-              html.window.open("https://wwww.google.com", "Pk");
-            },
-            padding: EdgeInsets.all(10),
-          )
-        ],
-      )
-    ],
-  );
-
-  @override
-  Widget build(BuildContext context) {
-    return ResponsiveWidget(
-      largeScreen: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: <Widget>[profileImage(context), profileData],
-      ),
-      smallScreen: Column(
-        mainAxisSize: MainAxisSize.max,
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: <Widget>[
-          profileImage(context),
-          SizedBox(
-            height: MediaQuery.of(context).size.height * 0.1,
-          ),
-          profileData
-        ],
-      ),
-    );
-  }
-}
-
-class SocialInfo extends StatelessWidget {
-  List<Widget> socialMediaWidgets() {
-    return [
-      NavButton(
-        text: "Github",
-        onPressed: () {
-          html.window.open("https://github.com/Ananthusubramanian", "GitHub");
-        },
-        color: Colors.blue,
-      ),
-      NavButton(
-        text: "Twitter",
-        onPressed: () {
-          html.window.open("https://twitter.com/EpicAnanduk", "Twitter");
-        },
-        color: Colors.blue,
-      ),
-    ];
-  }
-
-  Widget copyRightText() => Text(
-        "Ananthusubramanian ©️2019",
-        textAlign: TextAlign.center,
-        style: TextStyle(
-          color: Colors.grey,
-        ),
-      );
-
-  @override
-  Widget build(BuildContext context) {
-    return ResponsiveWidget(
-      largeScreen: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: <Widget>[
-          Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: socialMediaWidgets(),
-          ),
-          copyRightText(),
-        ],
-      ),
-      smallScreen: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: <Widget>[
-          ...socialMediaWidgets(),
-          copyRightText(),
-        ],
-      ),
+            SizedBox(
+              width: 20,
+            ),
+            // OutlineButton(
+            //   borderSide: BorderSide(
+            //     color: Colors.blue,
+            //   ),
+            //   shape: StadiumBorder(),
+            //   child: Text("Contact"),
+            //   color: Colors.blue,
+            //   onPressed: () {},
+            //   padding: EdgeInsets.all(10),
+            // )
+          ],
+        )
+      ],
     );
   }
 }
